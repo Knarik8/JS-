@@ -30,3 +30,4 @@ const renderProducts = (productList = products) => {
 }
 
 renderProducts();
+
