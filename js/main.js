@@ -1,32 +1,88 @@
-const products = [
-    {id: 1, title: 'Notebook', price: 1000},
-    {id: 2, title: 'Mouse', price: 100},
-    {id: 3, title: 'Keyboard', price: 250},
-    {id: 4, title: 'Gamepad', price: 150},
-];
+class ProductList {
+  constructor(container = '.products') {
+    this.container = document.querySelector(container); //ссылка на контейнер(products или то , что мы передадим в класс)
+    this.goods = [];  //храним результаты ответа сервера
+    this.productObjects = []; //храним экземпляры классов
+    this.fetchGoods();
+    this.calcTotal()
+    this.render();
+  }
 
-const getProductHTMLString = (title, price) => {
-    return `<div class="product-item">
-                <h3>${title}</h3>
-                <p>${price}</p>
-                <button class="by-btn">Добавить</button>
-            </div>`;
-};
+  fetchGoods() {  //записываем массив
+    this.goods = [
+      {id: 1, title: 'Notebook', price: 20000},
+      {id: 2, title: 'Mouse', price: 1500},
+      {id: 3, title: 'Keyboard', price: 5000},
+      {id: 4, title: 'Gamepad', price: 4500},
+    ];
+  }
 
-// const renderProducts = (productList) => {
-//   const list = productList.map((good) => getProductHTMLString(good.title, good.price));
-//
-//   document.querySelector('.products').innerHTML = list.join('');
-//     console.log(list);
-// }
-//
-// renderProducts(products);
+  calcTotal() {
+    let total = 0
+    for (let i = 0; i < this.goods.length; i+=1){
+      total = total + this.goods[i].price
+    }
+    return total
 
-const renderProducts = (productList = products) => {
-  const list = productList.map((good) => getProductHTMLString(good.title, good.price));
+  }
 
-  document.querySelector('.products').innerHTML = list.join('');
-    console.log(list);
+  render() { // отрисовываем массив, создаем экз. класса, складываем в productObjects
+    for (const good of this.goods) {
+      const productObject = new ProductItem(good);
+      console.log(productObject);
+      this.productObjects.push(productObject);
+
+      this.container.insertAdjacentHTML('beforeend', productObject.getHTMLString());
+
+    }
+          this.container.insertAdjacentHTML('beforeend', (`Итого ${this.calcTotal()}`));
+
+  }
 }
 
-renderProducts();
+class ProductItem {
+  constructor(product, img='https://via.placeholder.com/200x150') {
+    this.id = product.id;
+    this.title = product.title;
+    this.price = product.price;
+    this.img = img;
+  }
+
+  getHTMLString() {
+    return `<div class="product-item" data-id="${this.id}">
+                <img src="${this.img}" alt="Some img">
+                <div class="desc">
+                    <h3>${this.title}</h3>
+                    <p>${this.price} \u20bd</p>
+                    <button class="buy-btn">Купить</button>
+                </div>
+            </div>`;
+  }
+}
+
+new ProductList();
+
+// const products = [
+//   {id: 1, title: 'Notebook', price: 20000},
+//   {id: 2, title: 'Mouse', price: 1500},
+//   {id: 3, title: 'Keyboard', price: 5000},
+//   {id: 4, title: 'Gamepad', price: 4500},
+// ];
+//
+// const renderProduct = (item, img='https://via.placeholder.com/200x150') => `<div class="product-item">
+//               <img src="${img}" alt="Some img">
+//               <div class="desc">
+//                   <h3>${item.title}</h3>
+//                   <p>${item.price} \u20bd</p>
+//                   <button class="buy-btn">Купить</button>
+//               </div>
+//           </div>`;
+//
+// const renderProducts = list => {
+//   document
+//       .querySelector('.products')
+//       .insertAdjacentHTML('beforeend', list.map(item => renderProduct(item)).join(''));
+// };
+//
+// renderProducts(products);
+//
